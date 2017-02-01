@@ -1,6 +1,6 @@
 
-import foo.bar.{Simple, Worker, WorkerPool}
-import java.util.concurrent.{CountDownLatch, Executor, ExecutorService, Executors}
+import foo.bar.{Worker, WorkerPool}
+import java.util.concurrent.{CountDownLatch, Executor, ExecutorService, Executors, ThreadFactory}
 import scala.collection.mutable.ArrayBuffer
 
 package object foo {
@@ -9,7 +9,13 @@ package object foo {
 
   val Executor: ExecutorService = {
     val threadFactory = new Proxy(
-      new Simple("foo/bar", makeDaemons = true),
+      new ThreadFactory {
+        override def newThread(r: Runnable): Thread = {
+          val t = new Thread(r)
+          t.setDaemon(true)
+          t
+        }
+      },
       Proxy.newProxy(
         () => println("pre"),
         () => println("post")

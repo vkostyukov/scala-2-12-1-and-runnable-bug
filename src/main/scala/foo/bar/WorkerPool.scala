@@ -14,6 +14,6 @@ class WorkerPool(e: Executor) {
   }
 
   for (i <- 1 to 50) pool += new MyWorker(e)
-git
+
   startupLatch.await()
 }
